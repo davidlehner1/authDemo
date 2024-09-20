@@ -6,6 +6,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
@@ -21,38 +23,44 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
     @Inject
     Logger logger;
 
+    @Context
+    ResourceInfo resourceInfo;
+
     @Inject
     Base64AuthenticationParser base64Parser;
+    public static final String CREDENTIALS = AuthenticationRequestFilter.class.getSimpleName() + ".credentials";
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-//        var annot = Arrays.stream(containerRequestContext.getRequest().getClass()
-//                .getAnnotations()).filter(annotation -> annotation.getClass().equals(PermitAll.class))
-//                .findFirst().orElse(null);
 
-        containerRequestContext.getHeaders().forEach((key, value) -> {
-            logger.infof("header: %s=%s", key, value);
-        });
-        logger.info("Es gibt mich");
-        var auth = containerRequestContext.getHeaders().getFirst("Authorization");
-        if(auth == null) {
-            containerRequestContext.abortWith(Response.status(Response.Status.NETWORK_AUTHENTICATION_REQUIRED).build());
+        var annotations = resourceInfo.getResourceClass().getAnnotations();
+        var annotation = Arrays.stream(annotations).filter(ann -> ann.annotationType().equals(PermitAll.class))
+                .findFirst().orElse(null);
+
+        if(annotation == null) {
+            containerRequestContext.getHeaders().forEach((key, value) -> {
+                logger.infof("header: %s=%s", key, value);
+            });
+            logger.info("Es gibt mich");
+            var auth = containerRequestContext.getHeaders().getFirst("Authorization");
+            if(auth == null) {
+                containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            }
+            basicAuthBase64(auth, containerRequestContext);
         }
-        else if(!basicAuthBase64(auth)) {
-            containerRequestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
-        }
+
     }
 
-    public boolean checkAuth(String auth){
-        if(auth.startsWith("Bearer Ich bins")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    public boolean checkAuth(String auth){
+//        if(auth.startsWith("Bearer Ich bins")) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
-    public boolean basicAuthBase64(String auth) {
+    public void basicAuthBase64(String auth, ContainerRequestContext containerRequestContext) {
         Credentials credentials = base64Parser.parseAuthenticationHeader(auth);
-        return credentials.username().equals("admin") && credentials.password().equals("password");
+        containerRequestContext.setProperty(CREDENTIALS, credentials);
     }
 }
