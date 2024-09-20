@@ -14,7 +14,6 @@ import org.jboss.logging.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Base64;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -45,8 +44,9 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
             var auth = containerRequestContext.getHeaders().getFirst("Authorization");
             if(auth == null) {
                 containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            } else {
+                basicAuthBase64(auth, containerRequestContext);
             }
-            basicAuthBase64(auth, containerRequestContext);
         }
 
     }
