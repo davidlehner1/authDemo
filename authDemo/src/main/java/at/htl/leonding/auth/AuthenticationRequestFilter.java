@@ -1,7 +1,9 @@
 package at.htl.leonding.auth;
 
+import jakarta.annotation.Priority;
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
@@ -13,6 +15,7 @@ import java.util.Arrays;
 import java.util.Base64;
 
 @Provider
+@Priority(Priorities.AUTHENTICATION)
 public class AuthenticationRequestFilter implements ContainerRequestFilter {
 
     @Inject
@@ -20,10 +23,9 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        var annot = Arrays.stream(containerRequestContext.getRequest().getClass()
-                .getAnnotations()).filter(annotation -> annotation.getClass().equals(PermitAll.class))
-                .findFirst().orElse(null);
-
+//        var annot = Arrays.stream(containerRequestContext.getRequest().getClass()
+//                .getAnnotations()).filter(annotation -> annotation.getClass().equals(PermitAll.class))
+//                .findFirst().orElse(null);
 
         containerRequestContext.getHeaders().forEach((key, value) -> {
             logger.infof("header: %s=%s", key, value);
@@ -56,6 +58,6 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
         String pass = userAndPass[1];
 
         logger.infof("User: %s, Password: %s", user, pass);
-        return user.equals("admin") && pass.equals("password");
+        return user.equals("admin") && pass.equals("sadflksajfdl");
     }
 }

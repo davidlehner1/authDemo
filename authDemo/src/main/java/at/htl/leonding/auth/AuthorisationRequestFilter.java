@@ -4,20 +4,22 @@ import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
 
 import java.io.IOException;
 
 @Provider
-public class AuthenticationResponseFilter implements ContainerResponseFilter {
+@Priority(Priorities.AUTHORIZATION)
+public class AuthorisationRequestFilter implements ContainerRequestFilter {
+
     @Inject
     Logger logger;
 
     @Override
-    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) throws IOException {
-        logger.info("Wir sind fertig");
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+        logger.info("Authorisation request filter");
     }
 }
