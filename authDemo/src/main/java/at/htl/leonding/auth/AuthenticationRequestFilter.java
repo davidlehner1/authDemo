@@ -51,14 +51,6 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
 
     }
 
-//    public boolean checkAuth(String auth){
-//        if(auth.startsWith("Bearer Ich bins")) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-
     public void basicAuthBase64(String auth, ContainerRequestContext containerRequestContext) {
         Credentials credentials = base64Parser.parseAuthenticationHeader(auth);
         containerRequestContext.setProperty(CREDENTIALS, credentials);
