@@ -4,7 +4,7 @@ Authorization: Basic YWRtaW46cGFzc3dvcmQ=
 ####
 
 GET http://localhost:8080/hello
-Authorization: Basic YWRtaW46c2FkZmxrc2FqZmRs
+Authorization: Basic YWRtaW46cGFzc3dvcmQ=
 
 ####
 

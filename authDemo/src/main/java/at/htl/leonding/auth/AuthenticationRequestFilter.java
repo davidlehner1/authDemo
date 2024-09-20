@@ -21,6 +21,9 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
     @Inject
     Logger logger;
 
+    @Inject
+    Base64AuthenticationParser base64Parser;
+
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 //        var annot = Arrays.stream(containerRequestContext.getRequest().getClass()
@@ -49,15 +52,7 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
     }
 
     public boolean basicAuthBase64(String auth) {
-        String[] passBase64 = auth.split(" ");
-        byte[] decodedBytes = Base64.getDecoder().decode(passBase64[1]);
-        String decodedString = new String(decodedBytes);
-        String[] userAndPass = decodedString.split(":");
-
-        String user = userAndPass[0];
-        String pass = userAndPass[1];
-
-        logger.infof("User: %s, Password: %s", user, pass);
-        return user.equals("admin") && pass.equals("sadflksajfdl");
+        Credentials credentials = base64Parser.parseAuthenticationHeader(auth);
+        return credentials.username().equals("admin") && credentials.password().equals("password");
     }
 }
