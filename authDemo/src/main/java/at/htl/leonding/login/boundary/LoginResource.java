@@ -2,6 +2,7 @@ package at.htl.leonding.login.boundary;
 
 import at.htl.leonding.auth.Credentials;
 import at.htl.leonding.login.control.LoginRepository;
+import at.htl.leonding.login.entity.User;
 import at.htl.leonding.login.entity.UserSession;
 import io.quarkus.logging.Log;
 import jakarta.annotation.security.PermitAll;
@@ -27,10 +28,20 @@ public class LoginResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(Credentials credentials) {
 
-        Log.info("Login- I was here");
-        UserSession userSession = loginRepository.login(credentials);
-        Log.infof("The created user: %s %s", userSession.getName(), userSession.getToken());
-        return Response.ok().build();
+        TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.name = :username " +
+                "AND u.password = :password", User.class);
+        query.setParameter("username", credentials.username());
+        query.setParameter("password", credentials.password());
+
+        User user = query.getSingleResult();
+
+        if(user != null) {
+            Log.info("Login- I was here");
+            UserSession userSession = loginRepository.login(user);
+            Log.infof("The created user: %s %s", user.getId(), userSession.getToken());
+            return Response.ok().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     @GET
