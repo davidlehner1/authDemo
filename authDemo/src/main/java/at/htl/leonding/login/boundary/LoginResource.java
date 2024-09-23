@@ -28,12 +28,21 @@ public class LoginResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(Credentials credentials) {
 
+        if(credentials == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.name = :username " +
                 "AND u.password = :password", User.class);
         query.setParameter("username", credentials.username());
         query.setParameter("password", credentials.password());
 
-        User user = query.getSingleResult();
+        User user;
+        try{
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
 
         if(user != null) {
             Log.info("Login- I was here");
@@ -41,7 +50,7 @@ public class LoginResource {
             Log.infof("The created user: %s %s", user.getId(), userSession.getToken());
             return Response.ok().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @GET

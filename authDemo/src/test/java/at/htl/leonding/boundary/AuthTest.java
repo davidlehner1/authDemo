@@ -1,5 +1,6 @@
 package at.htl.leonding.boundary;
 
+import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@QuarkusTest
 public class AuthTest {
 
     @Test
