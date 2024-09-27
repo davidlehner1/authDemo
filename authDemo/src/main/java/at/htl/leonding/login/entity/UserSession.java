@@ -7,6 +7,7 @@ import java.util.UUID;
 @Entity
 public class UserSession {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID token;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -14,8 +15,7 @@ public class UserSession {
     private User userId;
 
 
-    public UserSession(UUID token, User userId) {
-        this.token = token;
+    public UserSession(User userId) {
         this.userId = userId;
     }
 
