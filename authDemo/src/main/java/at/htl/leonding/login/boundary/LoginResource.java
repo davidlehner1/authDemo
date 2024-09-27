@@ -1,11 +1,11 @@
 package at.htl.leonding.login.boundary;
 
+import at.htl.leonding.auth.AllowAll;
 import at.htl.leonding.auth.Credentials;
 import at.htl.leonding.login.control.LoginRepository;
 import at.htl.leonding.login.entity.User;
 import at.htl.leonding.login.entity.UserSession;
 import io.quarkus.logging.Log;
-import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/login")
-@PermitAll
+@AllowAll
 public class LoginResource {
 
     @Inject

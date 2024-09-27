@@ -33,7 +33,7 @@ public class AuthenticationRequestFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
         var annotations = resourceInfo.getResourceClass().getAnnotations();
-        var annotation = Arrays.stream(annotations).filter(ann -> ann.annotationType().equals(PermitAll.class))
+        var annotation = Arrays.stream(annotations).filter(ann -> ann.annotationType().equals(AllowAll.class))
                 .findFirst().orElse(null);
 
         if(annotation == null) {
